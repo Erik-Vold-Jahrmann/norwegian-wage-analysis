@@ -28,8 +28,8 @@ latest_year <- max(wages$year)
 wages |>
   filter(year == latest_year, sex == "Both sexes") |>
   slice_max(earnings, n = 10) |>
-  mutate(industry = reorder(industry, earnings)) |>
-  ggplot(aes(earnings, industry)) +
+  mutate(occupation = reorder(occupation, earnings)) |>
+  ggplot(aes(earnings, occupation)) +
   geom_col(fill = "#2171b5") +
   scale_x_continuous(labels = scales::comma) +
   labs(

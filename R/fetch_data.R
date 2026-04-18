@@ -8,27 +8,24 @@ library(readr)
 fetch_wage_data <- function() {
   wages <- ApiData(
     "https://data.ssb.no/api/v0/en/table/11418",
-    Tid = TRUE,          # all years
-    Kjonn = TRUE,        # all sexes
-    NACE2007 = TRUE      # all industries
+    Tid = TRUE,
+    Kjonn = TRUE,
+    Yrke = TRUE,
+    ContentsCode = "Manedslonn"
   )
 
   # ApiData returns a list; take the data frame element
   df <- wages[[1]]
 
   df <- df |>
-    rename(
-      industry = NACE2007,
-      sex      = Kjonn,
-      year     = Tid,
-      earnings = value
-    ) |>
+    select(occupation, sex, year, earnings = value) |>
     mutate(
       year     = as.integer(year),
       earnings = as.numeric(earnings)
     ) |>
     filter(!is.na(earnings))
 
+  dir.create("data", showWarnings = FALSE)
   write_csv(df, "data/wages.csv")
   message("Saved ", nrow(df), " rows to data/wages.csv")
   df
