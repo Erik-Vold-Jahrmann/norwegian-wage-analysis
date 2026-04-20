@@ -6,7 +6,7 @@ wages <- read_csv("data/wages.csv")
 
 # --- Trend over time by sex ---
 wages |>
-  filter(sex != "Both sexes", occupation == "All occupations") |>
+  filter(sex != "Both sexes", occupation == "All occupations", sector == "Sum all sectors") |>
   group_by(year, sex) |>
   summarise(avg_earnings = mean(earnings, na.rm = TRUE), .groups = "drop") |>
   ggplot(aes(year, avg_earnings, color = sex)) +
@@ -29,6 +29,7 @@ wages |>
   filter(
     year == latest_year,
     sex == "Both sexes",
+    sector == "Sum all sectors",
     !occupation %in% c("All occupations", "Unspecified or unidentifiable occupations")
   ) |>
   group_by(occupation) |>
@@ -48,8 +49,8 @@ wages |>
 ggsave("output/top_industries.png", width = 9, height = 5)
 
 # --- Gender wage gap (filtered by SD <= 30000 for reliability) ---
-wage_gap <- wages |>
-  filter(year == latest_year, sex != "Both sexes") |>
+wage_gap <- wages |>                                    
+  filter(year == latest_year, sex != "Both sexes", sector == "Sum all sectors") |>  
   group_by(occupation, sex) |>
   summarise(
     avg_earnings = mean(earnings, na.rm = TRUE),
@@ -101,6 +102,42 @@ ggplot(plot_data, aes(gap, occupation, fill = direction)) +
   )
 
 ggsave("output/wage_gap.png", width = 10, height = 6)
+
+sector_gap <- wages |>                                    
+  filter(year == latest_year, sex != "Both sexes") |>
+  group_by(occupation, sector, sex) |>                    
+  summarise(                                              
+    avg_earnings = mean(earnings, na.rm = TRUE),          
+    sd_earnings  = sd(earnings, na.rm = TRUE),            
+    .groups = "drop"
+  ) |>                                                    
+  tidyr::pivot_wider(                                   
+    names_from  = sex,
+    values_from = c(avg_earnings, sd_earnings)
+  ) |>                                                    
+  mutate(gap = avg_earnings_Males - avg_earnings_Females) |>                                                        
+  filter(                                               
+    !is.na(gap),
+    sd_earnings_Males   <= 30000,
+    sd_earnings_Females <= 30000
+  ) |>                                                    
+  arrange(desc(gap))
+
+sector_gap |>                                             
+  group_by(sector) |>                                     
+  summarise(avg_gap = mean(gap, na.rm = TRUE)) |>         
+  filter(sector != "Sum all sectors") |>                  
+  mutate(sector = reorder(sector, avg_gap)) |>
+  ggplot(aes(avg_gap, sector)) +                          
+  geom_col(fill = "steelblue") +                          
+  scale_x_continuous(labels = scales::comma) +
+  labs(                                                   
+    title = "Average gender wage gap by sector in Norway",
+    x = "NOK per month", y = NULL                         
+  ) +
+  theme_minimal()                                         
+
+ggsave("output/sector_gap.png", width = 8, height = 4) 
 
 message("Plots saved to output/")
 

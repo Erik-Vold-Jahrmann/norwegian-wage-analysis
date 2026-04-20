@@ -11,6 +11,7 @@ fetch_wage_data <- function() {
     Tid          = TRUE,
     Kjonn        = TRUE,
     Yrke         = TRUE,
+    Sektor = TRUE,
     ContentsCode = "Manedslonn",
     MaaleMetode  = "02",   # Average only (excludes counts and FTE)
     AvtaltVanlig = "0"     # All employees (excludes full-time/part-time split)
@@ -19,7 +20,7 @@ fetch_wage_data <- function() {
   df <- wages[[1]]
 
   df <- df |>
-    select(occupation, sex, year, earnings = value) |>
+    select(occupation, sector, sex, year, earnings = value) |>
     mutate(
       year     = as.integer(year),
       earnings = as.numeric(earnings)
