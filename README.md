@@ -31,11 +31,17 @@ source("R/analysis.R")
 ### 1. Earnings over time by sex
 Monthly earnings have increased significantly over the last 10 years for both men and women. The gender wage gap has remained mostly stable throughout, with little variation from the trend. Growth slowed noticeably between 2019 and 2020, likely reflecting the economic impact of COVID-19, but has since accelerated — growing faster each year than before 2019.
 
+![Earnings over time by sex](plots/earnings_by_sex.png)
+
 ### 2. Top 10 highest paying occupations
 Trade brokers stand out as the highest paid occupation by a significant margin. The top 10 are generally competitive, high-skill professions that command premium salaries.
 
+![Top 10 highest paying occupations](plots/top_industries.png)
+
 ### 3. Gender wage gap by occupation
 In occupations where women earn more than men, the gap is small. However, in occupations where men earn more, the gap is considerably larger — with manual trades like truck drivers and metalworkers showing the biggest differences. Overall, where a wage gap exists, it still favours men by a much larger margin than where it favours women.
+
+![Gender wage gap by occupation](plots/wage_gap.png)
 
 ## Limitations
 
