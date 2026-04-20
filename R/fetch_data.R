@@ -8,13 +8,14 @@ library(readr)
 fetch_wage_data <- function() {
   wages <- ApiData(
     "https://data.ssb.no/api/v0/en/table/11418",
-    Tid = TRUE,
-    Kjonn = TRUE,
-    Yrke = TRUE,
-    ContentsCode = "Manedslonn"
+    Tid          = TRUE,
+    Kjonn        = TRUE,
+    Yrke         = TRUE,
+    ContentsCode = "Manedslonn",
+    MaaleMetode  = "02",   # Average only (excludes counts and FTE)
+    AvtaltVanlig = "0"     # All employees (excludes full-time/part-time split)
   )
 
-  # ApiData returns a list; take the data frame element
   df <- wages[[1]]
 
   df <- df |>
